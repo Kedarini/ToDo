@@ -33,7 +33,7 @@ class GUI(ctk.CTk):
             column=1,
             padx=10,
             pady=10,
-            sticky='ne',
+            sticky="ne"
         )
 
         # ====================
@@ -75,7 +75,7 @@ class GUI(ctk.CTk):
 
         self.tasks_frame = ctk.CTkFrame(
             self,
-            width=1280,
+            width=500,
             height=600
         )
 
@@ -138,24 +138,29 @@ class GUI(ctk.CTk):
         for task in self.tasks:
             row = ctk.CTkFrame(self.tasks_frame)
             row.pack(
-                fill="x",
-                 pady=4,
-                 padx=8,
-                 expand=True
+                fill = "x",
+                pady = 6,
+                padx = 6,
+                expand = True
              )
 
-            var = ctk.BooleanVar(value=task["done"])
+            isDone = ctk.BooleanVar(value=task["done"])
 
-            cb = ctk.CTkCheckBox(
+            checkbox = ctk.CTkCheckBox(
                 row,
-                text=task["text"],
-                variable=var,
+                height = 30,
+                width = 950,
+                checkbox_width=20,
+                checkbox_height=20,
+                text = task["text"],
+                variable=isDone,
                 #command=lambda t=task: self.toggle_done(t)
             )
-            cb.pack(
+            checkbox.pack(
                 side="left",
                 fill="x",
-                expand=True
+                expand=True,
+                padx = 5,
             )
 
             self.task_rows.append(row)
