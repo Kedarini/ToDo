@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling >=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "todo"
+version = "2026.2.15"
+description = "Simple GUI to-do list in Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Radosław Damps", email = "kedardamps@gmail.com"}]
+keywords = ["todo", "gui", "customtkinter"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+dependencies = [
+    "customtkinter >=5.2.2",
+]
+
+[dependency-groups]
+dev = ["ruff", "pytest", "pytest-cov"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["main.py"]
