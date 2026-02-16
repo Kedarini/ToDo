@@ -139,7 +139,7 @@ class GUI(ctk.CTk):
                 checkbox_height=20,
                 text=task["text"],
                 variable=isDone,
-                command=lambda task_idx=idx: self.toggle_done(task_idx)
+                command=lambda task_idx=idx: self.toggle_done(task_idx),
             )
             checkbox.pack(
                 side="left",
@@ -157,6 +157,6 @@ class GUI(ctk.CTk):
                 fg_color="red",
                 command=lambda task_idx=idx: self.remove_task(task_idx),
             )
-            remove_button.pack(side="right", padx = 5, pady = 5)
+            remove_button.pack(side="right", padx=5, pady=5)
 
             self.task_rows.append(row)
