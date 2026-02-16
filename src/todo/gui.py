@@ -1,9 +1,6 @@
 import customtkinter as ctk
 import json
 
-from pygments.styles.dracula import background
-
-
 class GUI(ctk.CTk):
     def __init__(self):
         super().__init__()
