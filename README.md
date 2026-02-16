@@ -27,23 +27,23 @@
 - Add a way to mark a task as done ✅
 
 ## Phase 4 - Mark tasks as done
-- Change task state when user marks it
-- Visually show that the task is done
-- Keep the done state when list updates
+- Change task state when user marks it ✅
+- Visually show that the task is done ✅
+- Keep the done state when list updates ✅
 
 ## Phase 5 - Delete tasks
-- Add a way to remove a task
-- Update the list after deletion
-- Handle order/indexes after deletion
+- Add a way to remove a task ✅
+- Update the list after deletion ✅
+- Handle order/indexes after deletion ✅
 
 ## Phase 6 - Save and load tasks
-- Choose file name and format
-- Save all tasks when window closes
-- Load tasks when program starts
-- Handle case when save file doesn't exist yet
+- Choose file name and format ✅
+- Save all tasks when window closes ✅
+- Load tasks when program starts ✅
+- Handle case when save file doesn't exist yet ✅
 
 ## Phase 7 - Quality of life improvements
-- Prevent adding empty tasks
+- Prevent adding empty tasks ✅
 - Show number of unfinished tasks
 - Add "clear completed" or "delete all" option
 - Make Enter key add the task
