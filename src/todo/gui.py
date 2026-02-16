@@ -12,6 +12,8 @@ class GUI(ctk.CTk):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
+        self.normal_font = ctk.CTkFont(family="Arial", size=12)
+        self.hover_font = ctk.CTkFont(family="Arial", size=14, weight="bold")
         self.theme = "Dark"
         self.tasks = []
         self.task_rows = []
@@ -134,19 +136,46 @@ class GUI(ctk.CTk):
 
             checkbox = ctk.CTkCheckBox(
                 row,
-                height=30,
+                height=20,
+                width=20,
                 checkbox_width=20,
                 checkbox_height=20,
-                text=task["text"],
                 variable=isDone,
+                text="",
                 command=lambda task_idx=idx: self.toggle_done(task_idx),
             )
             checkbox.pack(
                 side="left",
-                fill="x",
-                expand=True,
-                padx=5,
+                padx=(6, 0),
             )
+
+            def on_hover_enter(event):
+                text_button.configure(
+                    text_color="#ffffff",
+                    cursor="hand2",
+                    font=self.hover_font,
+                )
+
+            def on_hover_leave(event):
+                text_button.configure(
+                    text_color="#ffffff",
+                    fg_color="transparent",
+                    height=10,
+                    font=self.normal_font,
+                )
+
+            text_button = ctk.CTkButton(
+                row,
+                text=task["text"],
+                width=1000,
+                hover=False,
+                fg_color="transparent",
+                anchor="w",
+            )
+            text_button.pack(side="left", anchor="nw", padx=(0, 5), pady=5)
+
+            text_button.bind("<Enter>", on_hover_enter)
+            text_button.bind("<Leave>", on_hover_leave)
 
             remove_button = ctk.CTkButton(
                 row,
