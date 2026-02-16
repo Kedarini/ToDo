@@ -116,6 +116,11 @@ class GUI(ctk.CTk):
             self.save_tasks()
             self.refresh_tasks()
 
+    def toggle_done(self, index):
+        if 0 <= index < len(self.tasks):
+            self.tasks[index]["done"] = not self.tasks[index]["done"]
+            self.save_tasks()
+
     def refresh_tasks(self):
         for row in self.task_rows:
             row.destroy()
@@ -123,19 +128,18 @@ class GUI(ctk.CTk):
 
         for idx, task in enumerate(self.tasks):
             row = ctk.CTkFrame(self.tasks_frame)
-            row.pack(fill="x", pady=6, padx=6, expand=True)
+            row.pack(fill="x", pady=5, padx=5)
 
             isDone = ctk.BooleanVar(value=task["done"])
 
             checkbox = ctk.CTkCheckBox(
                 row,
                 height=30,
-                width=950,
                 checkbox_width=20,
                 checkbox_height=20,
                 text=task["text"],
                 variable=isDone,
-                # command=lambda t=task: self.toggle_done(t)
+                command=lambda task_idx=idx: self.toggle_done(task_idx)
             )
             checkbox.pack(
                 side="left",
@@ -148,10 +152,11 @@ class GUI(ctk.CTk):
                 row,
                 width=20,
                 height=20,
-                text="-",
+                corner_radius=6,
+                text="✕",
                 fg_color="red",
                 command=lambda task_idx=idx: self.remove_task(task_idx),
             )
-            remove_button.pack(side="right", expand=True)
+            remove_button.pack(side="right", padx = 5, pady = 5)
 
             self.task_rows.append(row)
