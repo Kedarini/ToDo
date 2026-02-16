@@ -1,13 +1,16 @@
 import customtkinter as ctk
 import json
 
+
 class GUI(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.geometry("1280x720")
         self.title("TODO APP")
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
 
         self.theme = "Dark"
         self.tasks = []
@@ -23,11 +26,11 @@ class GUI(ctk.CTk):
             self,
             width=20,
             height=20,
-            text="SwitchTheme",
+            text=self.theme,
             command=lambda: self.toggle_theme(),
         )
 
-        self.theme_button.grid(row=0, column=1, padx=10, pady=10, sticky="ne")
+        self.theme_button.grid(row=0, column=1, padx=10, pady=10, sticky="nw")
 
         # ====================
         #      NEW TASK
@@ -59,14 +62,14 @@ class GUI(ctk.CTk):
         #       TASKS
         # ====================
 
-        self.tasks_frame = ctk.CTkFrame(self, width=1000, height=600)
+        self.tasks_frame = ctk.CTkFrame(self, width=1280, height=600)
 
         self.tasks_frame.grid(
             row=1,
-            column=0,
-            padx=80,
-            pady=10,
-            sticky="nw",
+            columnspan=2,
+            padx=25,
+            pady=(0, 25),
+            sticky="nsew",
         )
 
         self.refresh_tasks()
@@ -74,6 +77,7 @@ class GUI(ctk.CTk):
     def toggle_theme(self):
         self.theme = "Light" if self.theme == "Dark" else "Dark"
         ctk.set_appearance_mode("Light" if self.theme == "Light" else "Dark")
+        self.theme_button.configure(text=self.theme)
 
     def load_tasks(self):
         try:
