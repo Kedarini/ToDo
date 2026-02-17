@@ -1,6 +1,68 @@
 import customtkinter as ctk
 import json
 
+class ToplevelWindow(ctk.CTkToplevel):
+    def __init__(self, parent, task_index, task_data, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.task_index = task_index
+        self.task_data = task_data
+
+        self.geometry("800x600")
+        self.title("Edit/View Task")
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+
+        self.name_label = ctk.CTkLabel(self, text="Name", wraplength=700)
+        self.name_label.grid(row=0, column=0,padx=25, pady=(10,0), sticky="nw")
+
+        self.name_entry = ctk.CTkEntry(self, placeholder_text=task_data["text"], height=20, width=300)
+        self.name_entry.grid(row=0, column=0,padx=20, pady=(35,0), sticky="nw")
+
+        self.note_label = ctk.CTkLabel(self, text="Note", wraplength=700)
+        self.note_label.grid(
+            row=0, column=0, padx=25, pady=(70, 0), sticky="nw"
+        )
+
+        self.note_entry = ctk.CTkEntry(self,text_color="white",placeholder_text_color="grey", placeholder_text="Additional notes here", width=300)
+        self.note_entry.grid(
+            row=0, column=0, padx=20, pady=(95, 0), sticky="nw"
+        )
+
+        self.done_label = ctk.CTkLabel(self, text="✓ Done" if task_data["done"] else "⏳ In progress")
+        self.done_label.grid(pady=10)
+
+        self.accept_button = ctk.CTkButton(
+            self,
+            width=50,
+            height=20,
+            text="Done"
+        )
+        self.accept_button.grid(
+            row=1,
+            column=1,
+            padx=10,
+            pady=10,
+            sticky="se",
+        )
+
+        self.remove_button = ctk.CTkButton(
+            self,
+            width=50,
+            height=20,
+            fg_color="red",
+            text="Remove"
+        )
+        self.remove_button.grid(
+            row=1,
+            column=1,
+            padx=(0,70),
+            pady=(0,10),
+            sticky="se"
+        )
 
 class GUI(ctk.CTk):
     def __init__(self):
@@ -75,6 +137,7 @@ class GUI(ctk.CTk):
         )
 
         self.refresh_tasks()
+        self.toplevel_window = None
 
     def toggle_theme(self):
         self.theme = "Light" if self.theme == "Dark" else "Dark"
@@ -123,6 +186,20 @@ class GUI(ctk.CTk):
             self.tasks[index]["done"] = not self.tasks[index]["done"]
             self.save_tasks()
 
+    def open_toplevel(self, index):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            task = self.tasks[index]
+            self.toplevel_window = ToplevelWindow(
+                self,
+                task_index=index,
+                task_data=task
+            )
+        else:
+            self.toplevel_window.task_index = index
+            self.toplevel_window.task_data = self.tasks[index]
+            self.toplevel_window.title("Description")
+            self.toplevel_window.focus()
+
     def refresh_tasks(self):
         for row in self.task_rows:
             row.destroy()
@@ -149,33 +226,17 @@ class GUI(ctk.CTk):
                 padx=(6, 0),
             )
 
-            def on_hover_enter(event):
-                text_button.configure(
-                    text_color="#ffffff",
-                    cursor="hand2",
-                    font=self.hover_font,
-                )
-
-            def on_hover_leave(event):
-                text_button.configure(
-                    text_color="#ffffff",
-                    fg_color="transparent",
-                    height=10,
-                    font=self.normal_font,
-                )
-
             text_button = ctk.CTkButton(
                 row,
-                text=task["text"],
+                text=(f"{idx + 1}. " + task["text"]),
                 width=1000,
                 hover=False,
                 fg_color="transparent",
                 anchor="w",
+                cursor="hand2",
+                command=lambda task_idx=idx: self.open_toplevel(task_idx)
             )
             text_button.pack(side="left", anchor="nw", padx=(0, 5), pady=5)
-
-            text_button.bind("<Enter>", on_hover_enter)
-            text_button.bind("<Leave>", on_hover_leave)
 
             remove_button = ctk.CTkButton(
                 row,
