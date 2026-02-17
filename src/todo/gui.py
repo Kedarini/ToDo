@@ -9,19 +9,17 @@ class ToplevelWindow(ctk.CTkToplevel):
         self.task_index = task_index
         self.task_data = task_data
 
-        self.geometry("400x600")
+        self.geometry("300x300")
         self.title("Edit/View Task")
         self.resizable(False, False)
 
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
-        self.task_label = ctk.CTkLabel(self, text=("Task: " + task_data["text"]), font=("Arial", 20), width=400)
-        self.task_label.grid(
-            row=0,
-            pady=(10,0),
-            sticky="n"
+        self.task_label = ctk.CTkLabel(
+            self, text=("Task: " + task_data["text"]), font=("Arial", 20), width=300
         )
+        self.task_label.grid(row=0, pady=(10, 0), sticky="nw")
 
         self.name_label = ctk.CTkLabel(self, text="Name", wraplength=700)
         self.name_label.grid(row=0, column=0, padx=15, pady=(30, 0), sticky="nw")
@@ -32,7 +30,7 @@ class ToplevelWindow(ctk.CTkToplevel):
             placeholder_text_color="grey",
             placeholder_text="Edit task name here",
             height=20,
-            width=380,
+            width=280,
         )
         self.name_entry.grid(row=0, padx=10, pady=(55, 0), sticky="nw")
 
@@ -44,29 +42,68 @@ class ToplevelWindow(ctk.CTkToplevel):
             text_color="white",
             placeholder_text_color="grey",
             placeholder_text="Additional notes here",
-            width=380,
+            width=280,
         )
         self.note_entry.grid(row=0, padx=10, pady=(115, 0), sticky="nw")
 
-        self.done_label = ctk.CTkLabel(
-            self, text="✓ Done" if task_data["done"] else "⏳ In progress"
+        self.date_label = ctk.CTkLabel(self, text="Date", wraplength=700)
+        self.date_label.grid(row=0, padx=15, pady=(155, 0), sticky="nw")
+
+        # dodać zmienną daty w json i skrypcie
+
+        self.date_button = ctk.CTkButton(
+            self,
+            text_color=["gray52", "gray62"],
+            border_color=["#979DA2", "#565B5E"],
+            fg_color=["#F9F9FA", "#343638"],
+            border_width=2,
+            cursor="hand2",
+            hover=False,
+            text="01-01-2026   🗓",
+            anchor="w",
+            width=100
         )
-        self.done_label.grid(pady=10)
+        self.date_button.grid(row=0, padx=10, pady=(180, 0), sticky="nw")
+
+        self.hour_label = ctk.CTkLabel(self, text="Hour", wraplength=700)
+        self.hour_label.grid(
+            row = 0,
+            pady = (155,0),
+            padx = 120,
+            sticky = "nw"
+        )
+
+        self.hour_button = ctk.CTkButton(
+            self,
+            text_color=["gray52", "gray62"],
+            border_color=["#979DA2", "#565B5E"],
+            fg_color=["#F9F9FA", "#343638"],
+            border_width=2,
+            cursor="hand2",
+            hover=False,
+            text="9:35    ⌚",
+            anchor="w",
+            width=100
+        )
+        self.hour_button.grid(row=0, padx=115, pady=(180, 0), sticky="nw")
+
+        #        self.done_label = ctk.CTkLabel(
+        #            self, text="✓ Done" if task_data["done"] else "⏳ In progress"
+        #        )
+        #        self.done_label.grid(pady=10)
 
         self.accept_button = ctk.CTkButton(self, width=50, height=20, text="Done")
         self.accept_button.grid(
             row=1,
-            padx=10,
             pady=10,
+            padx=40,
             sticky="se",
         )
 
         self.remove_button = ctk.CTkButton(
             self, width=50, height=20, fg_color="red", text="Remove"
         )
-        self.remove_button.grid(
-            row=1, padx=(0, 70), pady=(0, 10), sticky="se"
-        )
+        self.remove_button.grid(row=1,padx=(0,100), pady=(0, 10), sticky="se")
 
 
 class GUI(ctk.CTk):
