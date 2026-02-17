@@ -32,6 +32,7 @@ class ToplevelWindow(ctk.CTkToplevel):
             height=20,
             width=280,
         )
+        self.name_entry.insert(0, task_data.get("text", ""))
         self.name_entry.grid(row=0, padx=10, pady=(55, 0), sticky="nw")
 
         self.note_label = ctk.CTkLabel(self, text="Note", wraplength=700)
@@ -44,6 +45,8 @@ class ToplevelWindow(ctk.CTkToplevel):
             placeholder_text="Additional notes here",
             width=280,
         )
+        if task_data.get("note") != "":
+            self.note_entry.insert(0, task_data.get("note", ""))
         self.note_entry.grid(row=0, padx=10, pady=(115, 0), sticky="nw")
 
         self.date_label = ctk.CTkLabel(self, text="Date", wraplength=700)
@@ -61,17 +64,12 @@ class ToplevelWindow(ctk.CTkToplevel):
             hover=False,
             text="01-01-2026   🗓",
             anchor="w",
-            width=100
+            width=100,
         )
         self.date_button.grid(row=0, padx=10, pady=(180, 0), sticky="nw")
 
         self.hour_label = ctk.CTkLabel(self, text="Hour", wraplength=700)
-        self.hour_label.grid(
-            row = 0,
-            pady = (155,0),
-            padx = 120,
-            sticky = "nw"
-        )
+        self.hour_label.grid(row=0, pady=(155, 0), padx=120, sticky="nw")
 
         self.hour_button = ctk.CTkButton(
             self,
@@ -83,7 +81,7 @@ class ToplevelWindow(ctk.CTkToplevel):
             hover=False,
             text="9:35    ⌚",
             anchor="w",
-            width=100
+            width=100,
         )
         self.hour_button.grid(row=0, padx=115, pady=(180, 0), sticky="nw")
 
@@ -92,7 +90,9 @@ class ToplevelWindow(ctk.CTkToplevel):
         #        )
         #        self.done_label.grid(pady=10)
 
-        self.accept_button = ctk.CTkButton(self, width=50, height=20, text="Done")
+        self.accept_button = ctk.CTkButton(
+            self, width=50, height=20, text="Done", command=self.save_and_close
+        )
         self.accept_button.grid(
             row=1,
             pady=10,
@@ -101,9 +101,27 @@ class ToplevelWindow(ctk.CTkToplevel):
         )
 
         self.remove_button = ctk.CTkButton(
-            self, width=50, height=20, fg_color="red", text="Remove"
+            self,
+            width=50,
+            height=20,
+            fg_color="red",
+            text="Remove",
+            command=lambda: [self.parent.remove_task(task_index), self.destroy()],
         )
-        self.remove_button.grid(row=1,padx=(0,100), pady=(0, 10), sticky="se")
+        self.remove_button.grid(row=1, padx=(0, 100), pady=(0, 10), sticky="se")
+
+    def save_and_close(self):
+        new_text = self.name_entry.get().strip()
+        new_note = self.note_entry.get().strip()
+
+        if not new_text:
+            return
+
+        self.parent.edit_task(
+            index=self.task_index, new_text=new_text, new_note=new_note
+        )
+
+        self.destroy()
 
 
 class GUI(ctk.CTk):
@@ -209,7 +227,13 @@ class GUI(ctk.CTk):
         if not text:
             return
 
-        new_task = {"text": text, "done": False}
+        new_task = {
+            "text": text,
+            "note": text,
+            "date": text,
+            "hour": text,
+            "done": False,
+        }
 
         self.tasks.append(new_task)
 
@@ -239,6 +263,20 @@ class GUI(ctk.CTk):
             self.toplevel_window.task_data = self.tasks[index]
             self.toplevel_window.title("Description")
             self.toplevel_window.focus()
+
+    def save_and_close_toplevel(self):
+        if self.toplevel_window and self.toplevel_window.winfo_exists():
+            self.toplevel_window.destroy()
+            self.toplevel_window = None
+
+    def edit_task(self, index, new_text, new_note):
+        if 0 <= index < len(self.tasks):
+            self.tasks[index]["text"] = new_text
+            self.tasks[index]["note"] = new_note
+            # self.tasks[index]["date"]  = ...
+            # self.tasks[index]["hour"]  = ...
+            self.save_tasks()
+            self.refresh_tasks()
 
     def refresh_tasks(self):
         for row in self.task_rows:
