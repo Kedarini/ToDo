@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import json
 
+
 class ToplevelWindow(ctk.CTkToplevel):
     def __init__(self, parent, task_index, task_data, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -8,61 +9,65 @@ class ToplevelWindow(ctk.CTkToplevel):
         self.task_index = task_index
         self.task_data = task_data
 
-        self.geometry("800x600")
+        self.geometry("400x600")
         self.title("Edit/View Task")
+        self.resizable(False, False)
 
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=0)
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
 
-        self.name_label = ctk.CTkLabel(self, text="Name", wraplength=700)
-        self.name_label.grid(row=0, column=0,padx=25, pady=(10,0), sticky="nw")
+        self.task_label = ctk.CTkLabel(self, text=("Task: " + task_data["text"]), font=("Arial", 20), width=400)
+        self.task_label.grid(
+            row=0,
+            pady=(10,0),
+            sticky="n"
+        )
 
-        self.name_entry = ctk.CTkEntry(self, placeholder_text=task_data["text"], height=20, width=300)
-        self.name_entry.grid(row=0, column=0,padx=20, pady=(35,0), sticky="nw")
+        self.name_label = ctk.CTkLabel(self, text="Name", wraplength=700)
+        self.name_label.grid(row=0, column=0, padx=15, pady=(30, 0), sticky="nw")
+
+        self.name_entry = ctk.CTkEntry(
+            self,
+            text_color="white",
+            placeholder_text_color="grey",
+            placeholder_text="Edit task name here",
+            height=20,
+            width=380,
+        )
+        self.name_entry.grid(row=0, padx=10, pady=(55, 0), sticky="nw")
 
         self.note_label = ctk.CTkLabel(self, text="Note", wraplength=700)
-        self.note_label.grid(
-            row=0, column=0, padx=25, pady=(70, 0), sticky="nw"
-        )
+        self.note_label.grid(row=0, padx=15, pady=(90, 0), sticky="nw")
 
-        self.note_entry = ctk.CTkEntry(self,text_color="white",placeholder_text_color="grey", placeholder_text="Additional notes here", width=300)
-        self.note_entry.grid(
-            row=0, column=0, padx=20, pady=(95, 0), sticky="nw"
+        self.note_entry = ctk.CTkEntry(
+            self,
+            text_color="white",
+            placeholder_text_color="grey",
+            placeholder_text="Additional notes here",
+            width=380,
         )
+        self.note_entry.grid(row=0, padx=10, pady=(115, 0), sticky="nw")
 
-        self.done_label = ctk.CTkLabel(self, text="✓ Done" if task_data["done"] else "⏳ In progress")
+        self.done_label = ctk.CTkLabel(
+            self, text="✓ Done" if task_data["done"] else "⏳ In progress"
+        )
         self.done_label.grid(pady=10)
 
-        self.accept_button = ctk.CTkButton(
-            self,
-            width=50,
-            height=20,
-            text="Done"
-        )
+        self.accept_button = ctk.CTkButton(self, width=50, height=20, text="Done")
         self.accept_button.grid(
             row=1,
-            column=1,
             padx=10,
             pady=10,
             sticky="se",
         )
 
         self.remove_button = ctk.CTkButton(
-            self,
-            width=50,
-            height=20,
-            fg_color="red",
-            text="Remove"
+            self, width=50, height=20, fg_color="red", text="Remove"
         )
         self.remove_button.grid(
-            row=1,
-            column=1,
-            padx=(0,70),
-            pady=(0,10),
-            sticky="se"
+            row=1, padx=(0, 70), pady=(0, 10), sticky="se"
         )
+
 
 class GUI(ctk.CTk):
     def __init__(self):
@@ -190,9 +195,7 @@ class GUI(ctk.CTk):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             task = self.tasks[index]
             self.toplevel_window = ToplevelWindow(
-                self,
-                task_index=index,
-                task_data=task
+                self, task_index=index, task_data=task
             )
         else:
             self.toplevel_window.task_index = index
@@ -234,7 +237,7 @@ class GUI(ctk.CTk):
                 fg_color="transparent",
                 anchor="w",
                 cursor="hand2",
-                command=lambda task_idx=idx: self.open_toplevel(task_idx)
+                command=lambda task_idx=idx: self.open_toplevel(task_idx),
             )
             text_button.pack(side="left", anchor="nw", padx=(0, 5), pady=5)
 
