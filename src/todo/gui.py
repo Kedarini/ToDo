@@ -1,6 +1,7 @@
+from date_picker import Calendar
 import customtkinter as ctk
 import json
-
+from datetime import datetime as dt
 
 class ToplevelWindow(ctk.CTkToplevel):
     def __init__(self, parent, task_index, task_data, *args, **kwargs):
@@ -8,6 +9,7 @@ class ToplevelWindow(ctk.CTkToplevel):
         self.parent = parent
         self.task_index = task_index
         self.task_data = task_data
+        self.task_date = None
 
         self.geometry("300x300")
         self.title("Edit/View Task")
@@ -62,9 +64,10 @@ class ToplevelWindow(ctk.CTkToplevel):
             border_width=2,
             cursor="hand2",
             hover=False,
-            text="01-01-2026   🗓",
+            text=dt.now().date().strftime("%d/%m/%Y"),
             anchor="w",
             width=100,
+            command=lambda: Calendar()
         )
         self.date_button.grid(row=0, padx=10, pady=(180, 0), sticky="nw")
 

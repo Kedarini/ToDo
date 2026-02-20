@@ -1,8 +1,8 @@
 import customtkinter as ctk
 from datetime import datetime as dt
+import gui
 
-
-class Calendar(ctk.CTk):
+class Calendar(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.geometry("340x350")
@@ -10,9 +10,10 @@ class Calendar(ctk.CTk):
         self.resizable(False, False)
         ctk.set_appearance_mode("dark")
 
-        self.selected_year = dt.now().year
-        self.selected_month = dt.now().month
-        self.selected_day = None
+        self.today = dt.now()                       # cache today's date
+        self.selected_year = self.today.year
+        self.selected_month = self.today.month
+        self.selected_day = self.today.day          # ← start with today selected by default
 
         # Header
         self.header = ctk.CTkFrame(self, fg_color="transparent")
@@ -51,7 +52,7 @@ class Calendar(ctk.CTk):
         self.year_frame = ctk.CTkScrollableFrame(
             self.content_frame, fg_color="transparent"
         )
-        for y in range(dt.now().year - 10, dt.now().year + 21):
+        for y in range(self.today.year - 10, self.today.year + 21):
             btn = ctk.CTkButton(
                 self.year_frame,
                 text=str(y),
@@ -92,9 +93,8 @@ class Calendar(ctk.CTk):
         first_day = dt(self.selected_year, self.selected_month, 1)
         start_col = first_day.weekday()  # 0 = Monday
 
-        today = dt.now()
         is_current_month = (
-            self.selected_year == today.year and self.selected_month == today.month
+            self.selected_year == self.today.year and self.selected_month == self.today.month
         )
 
         row = 1
@@ -106,7 +106,28 @@ class Calendar(ctk.CTk):
             except ValueError:
                 break
 
-            is_today = is_current_month and day == today.day
+            is_today = is_current_month and day == self.today.day
+            is_selected = day == self.selected_day and self.selected_year == date.year and self.selected_month == date.month
+
+            # Choose appearance based on state
+            if is_selected:
+                fg_color = "#2ecc71"          # green for selected
+                hover_color = "#27ae60"
+                text_color = "#ffffff"
+                border_width = 3
+                border_color = "#1abc9c"
+            elif is_today:
+                fg_color = "#4a6a8a"          # your original today color
+                hover_color = "#5a7a9a"
+                text_color = "#e0f0ff"
+                border_width = 2
+                border_color = "#8ab4f8"
+            else:
+                fg_color = "#2b2b2b"
+                hover_color = "#3a3a3a"
+                text_color = "#ffffff"
+                border_width = 0
+                border_color = None
 
             btn = ctk.CTkButton(
                 self.calendar_frame,
@@ -115,11 +136,11 @@ class Calendar(ctk.CTk):
                 height=35,
                 corner_radius=10,
                 font=("Arial", 14),
-                fg_color="#4a6a8a" if is_today else "#2b2b2b",
-                hover_color="#5a7a9a" if is_today else "#3a3a3a",
-                text_color="#e0f0ff" if is_today else "#ffffff",
-                border_width=2 if is_today else 0,
-                border_color="#8ab4f8" if is_today else None,
+                fg_color=fg_color,
+                hover_color=hover_color,
+                text_color=text_color,
+                border_width=border_width,
+                border_color=border_color,
                 command=lambda d=day: self.select_day(d),
             )
             btn.grid(row=row, column=col, padx=3, pady=3, sticky="nsew")
@@ -159,7 +180,8 @@ class Calendar(ctk.CTk):
     def select_day(self, day):
         self.selected_day = day
         date_str = f"{self.selected_year}-{self.selected_month:02d}-{day:02d}"
-        print(f"Selected: {date_str}")
+        gui.ToplevelWindow.task_date = date_str
+        self.build_month_view()          # ← rebuild → new selected day gets highlighted
 
 
 if __name__ == "__main__":
