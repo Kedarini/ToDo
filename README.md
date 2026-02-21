@@ -46,7 +46,7 @@
 - Prevent adding empty tasks ✅
 - Show number of unfinished tasks
 - Add "clear completed" or "delete all" option
-- Make Enter key add the task
+- Make Enter key add the task ✅
 
 ## Optional later features
 - Priority level per task
