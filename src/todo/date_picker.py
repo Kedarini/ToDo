@@ -25,16 +25,20 @@ class Calendar(ctk.CTkToplevel):
         header = ctk.CTkFrame(self, fg_color="transparent")
         header.pack(fill="x", padx=12, pady=(12, 6))
 
-        ctk.CTkButton(header, text="←", width=60, command=self.prev_month).pack(side="left", padx=(0, 4))
+        ctk.CTkButton(header, text="←", width=60, command=self.prev_month).pack(
+            side="left", padx=(0, 4)
+        )
 
         self.btn_month_year = ctk.CTkButton(
             header,
             text=self.selected_date.strftime("%B %Y"),
-            command=self.toggle_year_selection
+            command=self.toggle_year_selection,
         )
         self.btn_month_year.pack(side="left", fill="x", expand=True, padx=6)
 
-        ctk.CTkButton(header, text="→", width=60, command=self.next_month).pack(side="right", padx=(4, 0))
+        ctk.CTkButton(header, text="→", width=60, command=self.next_month).pack(
+            side="right", padx=(4, 0)
+        )
 
         # ── Content area ─────────────────────────────────
         self.content = ctk.CTkFrame(self, fg_color="transparent")
@@ -44,9 +48,7 @@ class Calendar(ctk.CTkToplevel):
         self.year_frame = ctk.CTkScrollableFrame(self.content, fg_color="transparent")
         for y in range(self.today.year - 12, self.today.year + 15):
             ctk.CTkButton(
-                self.year_frame,
-                text=str(y),
-                command=lambda val=y: self.set_year(val)
+                self.year_frame, text=str(y), command=lambda val=y: self.set_year(val)
             ).pack(pady=3, padx=20, fill="x")
 
         # Calendar grid
@@ -81,19 +83,19 @@ class Calendar(ctk.CTkToplevel):
             is_today = day_date == self.today
             is_selected = day_date == self.selected_date
 
-            fg = "#2ecc71" if is_selected else \
-                "#3a5f8f" if is_today else "#2b2b2b"
-            hover = "#27ae60" if is_selected else \
-                "#4a7ab0" if is_today else "#3a3a3a"
+            fg = "#2ecc71" if is_selected else "#3a5f8f" if is_today else "#2b2b2b"
+            hover = "#27ae60" if is_selected else "#4a7ab0" if is_today else "#3a3a3a"
             txt_color = "black" if is_selected else "white"
 
             btn = ctk.CTkButton(
                 self.cal_frame,
                 text=str(d),
-                width=38, height=38,
-                fg_color=fg, hover_color=hover,
+                width=38,
+                height=38,
+                fg_color=fg,
+                hover_color=hover,
                 text_color=txt_color,
-                command=lambda val=day_date: self.select_date(val)
+                command=lambda val=day_date: self.select_date(val),
             )
             btn.grid(row=row, column=col, padx=3, pady=3)
 

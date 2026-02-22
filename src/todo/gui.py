@@ -20,7 +20,6 @@ class GUI(ctk.CTk):
         self.tasks = []
         self.task_rows = []
 
-
         ctk.set_appearance_mode(self.theme)
 
         self.load_tasks()
@@ -137,9 +136,7 @@ class GUI(ctk.CTk):
     def open_toplevel(self, index):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             task = self.tasks[index]
-            self.toplevel_window = EditWindow(
-                self, task_index=index, task_data=task
-            )
+            self.toplevel_window = EditWindow(self, task_index=index, task_data=task)
         else:
             self.toplevel_window.task_index = index
             self.toplevel_window.task_data = self.tasks[index]
@@ -211,4 +208,3 @@ class GUI(ctk.CTk):
             remove_button.pack(side="right", padx=5, pady=5)
 
             self.task_rows.append(row)
-

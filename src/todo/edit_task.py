@@ -10,7 +10,7 @@ class EditWindow(ctk.CTkToplevel):
         self.task_index = task_index
         self.task_data = task_data
         self.task_date = None
-        self.new_date = None                   # ← will store the selected date object
+        self.new_date = None  # ← will store the selected date object
 
         self.geometry("300x300")
         self.title("Edit/View Task")
@@ -65,7 +65,7 @@ class EditWindow(ctk.CTkToplevel):
                     self.new_date = d
                 except:
                     pass
-            elif hasattr(task_data["date"], 'strftime'):
+            elif hasattr(task_data["date"], "strftime"):
                 initial_date_text = task_data["date"].strftime("%d/%m/%Y")
                 self.new_date = task_data["date"]
 
@@ -80,7 +80,7 @@ class EditWindow(ctk.CTkToplevel):
             text=initial_date_text,
             anchor="w",
             width=100,
-            command=self.get_new_date
+            command=self.get_new_date,
         )
         self.date_button.grid(row=0, padx=10, pady=(180, 0), sticky="nw")
 
@@ -134,14 +134,16 @@ class EditWindow(ctk.CTkToplevel):
                     self.new_date = d
                 except ValueError:
                     pass
-            elif hasattr(raw, 'strftime') and callable(raw.strftime):  # duck-type date/datetime
-                self.new_date = raw.date() if hasattr(raw, 'date') else raw
+            elif hasattr(raw, "strftime") and callable(
+                raw.strftime
+            ):  # duck-type date/datetime
+                self.new_date = raw.date() if hasattr(raw, "date") else raw
                 initial_date_text = self.new_date.strftime("%d/%m/%Y")
 
     def get_new_date(self):
-        cal = Calendar(self)                    # ← parent = self so it appears on top
-        self.wait_window(cal)                   # ← wait until user closes it
-        selected = cal.get_selected_date()      # ← assuming your Calendar has this method
+        cal = Calendar(self)  # ← parent = self so it appears on top
+        self.wait_window(cal)  # ← wait until user closes it
+        selected = cal.get_selected_date()  # ← assuming your Calendar has this method
         if selected:
             self.new_date = selected
             self.date_button.configure(text=selected.strftime("%d/%m/%Y"))
