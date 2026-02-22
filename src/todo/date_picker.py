@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from datetime import datetime as dt
-import gui
 
 class Calendar(ctk.CTkToplevel):
     def __init__(self):
@@ -10,10 +9,11 @@ class Calendar(ctk.CTkToplevel):
         self.resizable(False, False)
         ctk.set_appearance_mode("dark")
 
-        self.today = dt.now()                       # cache today's date
+        self.today = dt.now()                     # cache today's date
         self.selected_year = self.today.year
         self.selected_month = self.today.month
         self.selected_day = self.today.day          # ← start with today selected by default
+        self.date_str = None
 
         # Header
         self.header = ctk.CTkFrame(self, fg_color="transparent")
@@ -179,11 +179,10 @@ class Calendar(ctk.CTkToplevel):
 
     def select_day(self, day):
         self.selected_day = day
-        date_str = f"{self.selected_year}-{self.selected_month:02d}-{day:02d}"
-        gui.ToplevelWindow.task_date = date_str
-        self.build_month_view()          # ← rebuild → new selected day gets highlighted
+        self.date_str = f"{self.selected_year}-{self.selected_month:02d}-{day:02d}"
+        self.build_month_view()
+        self.send_date()
+        self.destroy()
 
-
-if __name__ == "__main__":
-    app = Calendar()
-    app.mainloop()
+    def send_date(self):
+        return self.date_str
