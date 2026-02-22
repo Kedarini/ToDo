@@ -112,14 +112,13 @@ class GUI(ctk.CTk):
 
         new_task = {
             "text": text,
-            "note": text,
-            "date": text,
-            "hour": text,
+            "note": "",
+            "date": None,
+            "hour": "",
             "done": False,
         }
 
         self.tasks.append(new_task)
-
         self.save_tasks()
         self.task_entry.delete(0, "end")
         self.refresh_tasks()
@@ -152,12 +151,13 @@ class GUI(ctk.CTk):
             self.toplevel_window.destroy()
             self.toplevel_window = None
 
-    def edit_task(self, index, new_text, new_note):
+    # In GUI class
+
+    def edit_task(self, index, **updates):
         if 0 <= index < len(self.tasks):
-            self.tasks[index]["text"] = new_text
-            self.tasks[index]["note"] = new_note
-            # self.tasks[index]["date"]  = ...
-            # self.tasks[index]["hour"]  = ...
+            task = self.tasks[index]
+            task.update(updates)
+
             self.save_tasks()
             self.refresh_tasks()
 
@@ -211,3 +211,4 @@ class GUI(ctk.CTk):
             remove_button.pack(side="right", padx=5, pady=5)
 
             self.task_rows.append(row)
+

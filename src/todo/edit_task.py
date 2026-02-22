@@ -10,7 +10,7 @@ class EditWindow(ctk.CTkToplevel):
         self.task_index = task_index
         self.task_data = task_data
         self.task_date = None
-        self.new_date = None
+        self.new_date = None                   # ← will store the selected date object
 
         self.geometry("300x300")
         self.title("Edit/View Task")
@@ -55,7 +55,19 @@ class EditWindow(ctk.CTkToplevel):
         self.date_label = ctk.CTkLabel(self, text="Date", wraplength=700)
         self.date_label.grid(row=0, padx=15, pady=(155, 0), sticky="nw")
 
-        # dodać zmienną daty w json i skrypcie
+        # Try to show existing date if it exists in task_data
+        initial_date_text = dt.now().date().strftime("%d/%m/%Y")
+        if "date" in task_data:
+            if isinstance(task_data["date"], str):
+                try:
+                    d = dt.strptime(task_data["date"], "%Y-%m-%d").date()
+                    initial_date_text = d.strftime("%d/%m/%Y")
+                    self.new_date = d
+                except:
+                    pass
+            elif hasattr(task_data["date"], 'strftime'):
+                initial_date_text = task_data["date"].strftime("%d/%m/%Y")
+                self.new_date = task_data["date"]
 
         self.date_button = ctk.CTkButton(
             self,
@@ -65,13 +77,12 @@ class EditWindow(ctk.CTkToplevel):
             border_width=2,
             cursor="hand2",
             hover=False,
-            text=dt.now().date().strftime("%d/%m/%Y"),
+            text=initial_date_text,
             anchor="w",
             width=100,
-            command=lambda: self.get_new_date()
+            command=self.get_new_date
         )
         self.date_button.grid(row=0, padx=10, pady=(180, 0), sticky="nw")
-
 
         self.hour_label = ctk.CTkLabel(self, text="Hour", wraplength=700)
         self.hour_label.grid(row=0, pady=(155, 0), padx=120, sticky="nw")
@@ -89,11 +100,6 @@ class EditWindow(ctk.CTkToplevel):
             width=100,
         )
         self.hour_button.grid(row=0, padx=115, pady=(180, 0), sticky="nw")
-
-        #        self.done_label = ctk.CTkLabel(
-        #            self, text="✓ Done" if task_data["done"] else "⏳ In progress"
-        #        )
-        #        self.done_label.grid(pady=10)
 
         self.accept_button = ctk.CTkButton(
             self, width=50, height=20, text="Done", command=self.save_and_close
@@ -115,23 +121,47 @@ class EditWindow(ctk.CTkToplevel):
         )
         self.remove_button.grid(row=1, padx=(0, 100), pady=(0, 10), sticky="se")
 
+        # Load initial date for button
+        initial_date_text = dt.now().date().strftime("%d/%m/%Y")
+        self.new_date = None
+
+        if "date" in self.task_data:
+            raw = self.task_data["date"]
+            if isinstance(raw, str):
+                try:
+                    d = dt.fromisoformat(raw).date()
+                    initial_date_text = d.strftime("%d/%m/%Y")
+                    self.new_date = d
+                except ValueError:
+                    pass
+            elif hasattr(raw, 'strftime') and callable(raw.strftime):  # duck-type date/datetime
+                self.new_date = raw.date() if hasattr(raw, 'date') else raw
+                initial_date_text = self.new_date.strftime("%d/%m/%Y")
+
     def get_new_date(self):
-        cal = Calendar()  # parent = self so it appears on top
-        selected = cal.send_date()  # waits for user selection
-        if selected:  # user didn't cancel
+        cal = Calendar(self)                    # ← parent = self so it appears on top
+        self.wait_window(cal)                   # ← wait until user closes it
+        selected = cal.get_selected_date()      # ← assuming your Calendar has this method
+        if selected:
             self.new_date = selected
-            print(self.new_date)
             self.date_button.configure(text=selected.strftime("%d/%m/%Y"))
 
     def save_and_close(self):
         new_text = self.name_entry.get().strip()
-        new_note = self.note_entry.get().strip()
-
         if not new_text:
             return
 
-        self.parent.edit_task(
-            index=self.task_index, new_text=new_text, new_note=new_note
-        )
+        update_data = {
+            "text": new_text,
+            "note": self.note_entry.get().strip(),
+        }
 
+        if self.new_date is not None:
+            update_data["date"] = self.new_date.isoformat()  # ← save as string
+
+        # Later when you add hour:
+        # if self.new_hour is not None:
+        #     update_data["hour"] = self.new_hour
+
+        self.parent.edit_task(index=self.task_index, **update_data)
         self.destroy()
