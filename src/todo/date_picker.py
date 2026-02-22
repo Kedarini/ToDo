@@ -6,11 +6,14 @@ class Calendar(ctk.CTkToplevel):
     def __init__(self, parent=None, initial_date=None):
         super().__init__(parent)
         self.parent = parent
+
+        # ── Window ───────────────────────────────────────
         self.geometry("340x380")
         self.title("Select Date")
         self.resizable(False, False)
-        ctk.set_appearance_mode("dark")  # you can remove if you want system mode
+        ctk.set_appearance_mode("dark")
 
+        # ── Variables ─────────────────────────────────────
         if initial_date is None:
             initial_date = dt.today().date()
 
@@ -40,23 +43,22 @@ class Calendar(ctk.CTkToplevel):
             side="right", padx=(4, 0)
         )
 
-        # ── Content area ─────────────────────────────────
+        # ── Frames ─────────────────────────────────
         self.content = ctk.CTkFrame(self, fg_color="transparent")
         self.content.pack(fill="both", expand=True, padx=12, pady=6)
 
-        # Year scrollable list (hidden by default)
         self.year_frame = ctk.CTkScrollableFrame(self.content, fg_color="transparent")
         for y in range(self.today.year - 12, self.today.year + 15):
             ctk.CTkButton(
                 self.year_frame, text=str(y), command=lambda val=y: self.set_year(val)
             ).pack(pady=3, padx=20, fill="x")
 
-        # Calendar grid
         self.cal_frame = ctk.CTkFrame(self.content, fg_color="transparent")
         self.cal_frame.pack(fill="both", expand=True)
 
         self.build_calendar()
 
+    # ── Show calendar ──────────────────────────────────────
     def build_calendar(self):
         for w in self.cal_frame.winfo_children():
             w.destroy()
@@ -74,6 +76,7 @@ class Calendar(ctk.CTkToplevel):
 
         row, col = 1, start_col
 
+        # ── Show days in month ────────────────────────────────
         for d in range(1, 32):
             try:
                 day_date = date(self.selected_year, self.selected_month, d)
@@ -104,6 +107,7 @@ class Calendar(ctk.CTkToplevel):
                 col = 0
                 row += 1
 
+    # ── Moving months ───────────────────────────────
     def prev_month(self):
         m = self.selected_month - 1
         y = self.selected_year
@@ -122,6 +126,7 @@ class Calendar(ctk.CTkToplevel):
         self.selected_date = date(y, m, min(self.selected_day, 28))
         self.build_calendar()
 
+    # ── Selecting date ───────────────────────────────
     def toggle_year_selection(self):
         if self.year_frame.winfo_ismapped():
             self.year_frame.pack_forget()

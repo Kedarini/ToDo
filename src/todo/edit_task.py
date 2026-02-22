@@ -10,7 +10,7 @@ class EditWindow(ctk.CTkToplevel):
         self.task_index = task_index
         self.task_data = task_data
         self.task_date = None
-        self.new_date = None  # ← will store the selected date object
+        self.new_date = None
 
         self.geometry("300x300")
         self.title("Edit/View Task")
@@ -159,7 +159,7 @@ class EditWindow(ctk.CTkToplevel):
         }
 
         if self.new_date is not None:
-            update_data["date"] = self.new_date.isoformat()  # ← save as string
+            update_data["date"] = self.new_date.isoformat()
 
         # Later when you add hour:
         # if self.new_hour is not None:
