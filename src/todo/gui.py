@@ -186,8 +186,8 @@ class GUI(ctk.CTk):
 
             text_button = ctk.CTkButton(
                 row,
-                text=(f"{idx + 1}. " + task["text"]),
-                width=1000,
+                text=(task["text"]),
+                width=500,
                 hover=False,
                 fg_color="transparent",
                 anchor="w",
@@ -195,6 +195,12 @@ class GUI(ctk.CTk):
                 command=lambda task_idx=idx: self.open_toplevel(task_idx),
             )
             text_button.pack(side="left", anchor="nw", padx=(0, 5), pady=5)
+
+            date_label = ctk.CTkLabel(
+                row,
+                text=task["date"],
+            )
+            date_label.pack(side="left", padx=(0, 5), pady=5)
 
             remove_button = ctk.CTkButton(
                 row,
