@@ -20,7 +20,7 @@ class EditWindow(ctk.CTkToplevel):
         self.grid_rowconfigure(1, weight=1)
 
         self.task_label = ctk.CTkLabel(
-            self, text=("Task: " + task_data["text"]), font=("Arial", 20), width=300
+            self, text=("Task: " + task_data["text"]), font=("Arial", 20), width=500
         )
         self.task_label.grid(row=0, pady=(10, 0), sticky="nw")
 

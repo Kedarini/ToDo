@@ -198,7 +198,7 @@ class GUI(ctk.CTk):
 
             date_label = ctk.CTkLabel(
                 row,
-                text=task["date"],
+                text= task["date"]
             )
             date_label.pack(side="left", padx=(0, 5), pady=5)
 
